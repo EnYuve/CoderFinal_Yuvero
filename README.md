@@ -8,6 +8,13 @@ Enlace al Video Explicativo
 
 https://drive.google.com/file/d/1tj5Y9AhkM7amforA3IDNJvExIVEL_S76/view?usp=sharing
 
+PASOS a seguir para probar el proyecto:
+-iniciar pipenv
+-Instalar Django
+-Instalar Pillow
+-crear superuser
+-migrar django para generar la base de datos
+-pagina de inicio link a paginas secundarias
 
 CASO 1 - Creacion Usuario
 
