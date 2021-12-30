@@ -11,6 +11,8 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views.generic import DeleteView, DetailView
 
 from django.contrib.auth.decorators import login_required
+
+from django.contrib import messages
 # Create your views here.
 
 def index_template (request):
@@ -18,8 +20,6 @@ def index_template (request):
     
     return render(request, 'FinalApp/index.html', {'productos': productos})
 
-def inicio_template (request):
-    return render(request, 'FinalApp/inicio.html', {})
 
 @login_required
 def publicar (request):
@@ -32,8 +32,11 @@ def publicar (request):
         if formulario.is_valid():
             datos_validados = formulario.cleaned_data
             producto_venta = Producto(producto= datos_validados['producto'], precio= datos_validados['precio'])
+
             producto_venta.save()
-            return redirect('asociar')
+            
+            messages.success(request, f'{producto_venta.producto} fue añadido a la lista de publicados')
+            return redirect('publicar')
         
     formulario = FormularioCompra()  
     return render(request, 'FinalApp/publicar.html', {'producto_venta': producto_venta, 'formulario': formulario})
@@ -57,6 +60,7 @@ def editar_producto (request,id):
            
             producto.save()
             
+            messages.success(request, f'{producto.producto} fue modificado')
             return redirect('indice')
 
     return render(request, 'FinalApp/editar_producto.html', {'formulario': formulario})
@@ -70,8 +74,9 @@ def hacer_registro (request):
         if formulario.is_valid():
             
             formulario.save()
-        
-            return redirect('inicio')
+            
+            messages.success(request, 'Se ha completado tu registro')
+            return redirect('acceso')
 
         else:
             return render(request, 'FinalApp/registro.html', {'mensaje': 'Corrobore la validez de los datos','formulario': formulario})
@@ -97,20 +102,22 @@ def verificar_registro (request):
             if user is not None:
                 
                 login(request,user)
+                
+                messages.success(request, 'Se ha loggeado exitosamente')
                 return redirect('indice')
          
             else:
                 error= 'Comprueba tus datos'
-                return render(request, 'FinalApp/inicio.html', {'formulario':formulario, 'error': error})
+                return render(request, 'FinalApp/inicio.html', {'formulario':formulario, 'mensaje': error})
                 
         else:
             error= 'Ingresa un usuario válido'
-            return render(request, 'FinalApp/inicio.html', {'formulario':formulario, 'error': error})
+            return render(request, 'FinalApp/inicio.html', {'formulario':formulario, 'mensaje': error})
         
     
     formulario= AuthenticationForm()
 
-    return render(request, 'FinalApp/inicio.html', {'formulario':formulario, 'error': error})
+    return render(request, 'FinalApp/inicio.html', {'formulario':formulario, 'mensaje': error})
 
 
 @login_required
@@ -131,8 +138,9 @@ def editar_perfil (request):
             
  
             usuario.save()
-            
-            return redirect('perfil')
+          
+        messages.success(request, 'Tu perfil fue modificado')
+        return redirect('perfil')
             
     
     else:
@@ -174,7 +182,10 @@ def asociar (request):
             datos= formulario.cleaned_data
             registro= Proveedor(nombre= datos['nombre'], tipo= datos['tipo'], email= datos['email'])
             registro.save()
+            
+            messages.success(request, 'Ya sos parte de la comunidad')
             return redirect('publicar')
+ 
             
     formulario= FormularioProveedor()
     return render(request, 'FinalApp/proveedor.html', {'registro': registro, 'formulario': formulario})
@@ -194,7 +205,7 @@ def perfil (request):
     except:  
         avatar= None
 
-    return render(request, 'FinalApp/perfil.html', {'mensaje': f'Bienvenido {username}', 'nombre':nombre, 'apellido':apellido, 'email':email, 'avatar':avatar})
+    return render(request, 'FinalApp/perfil.html', {'mensaje': f'Bienvenido a tu perfil {username}', 'nombre':nombre, 'apellido':apellido, 'email':email, 'avatar':avatar})
 
 @login_required
 def cambiar_avatar (request):
@@ -213,8 +224,10 @@ def cambiar_avatar (request):
             except:
                 avatar=Avatar(user=usuario,avatar=formulario.cleaned_data['avatar'])
                 avatar.save()
-            
+                
+            messages.success(request, 'Tu avatar fue modificado')
             return redirect('perfil')
+            #return render(request, 'FinalApp/perfil.html', {'mensaje': 'Tu avatar fue modificado'})
 
             
     else:
@@ -269,6 +282,7 @@ def editar_proveedor (request,id):
            
             proveedor.save()
             
+            messages.success(request, f'{proveedor.nombre} fue modificado')
             return redirect('lista_proveedores')
 
     return render(request, 'FinalApp/editar_proveedor.html', {'formulario': formulario})

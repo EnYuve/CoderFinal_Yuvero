@@ -1,7 +1,7 @@
 
 from django.urls import path
 
-from FinalApp.views import index_template, publicar, inicio_template, hacer_registro,verificar_registro, buscar_producto, asociar, perfil,editar_perfil, cambiar_avatar,editar_producto,about,ver_proveedores,editar_proveedor
+from FinalApp.views import index_template, publicar, hacer_registro,verificar_registro, buscar_producto, asociar, perfil,editar_perfil, cambiar_avatar,editar_producto,about,ver_proveedores,editar_proveedor
 from . import views
 
 from django.contrib.auth.views import LogoutView
@@ -24,5 +24,4 @@ urlpatterns = [
     path ('index/<int:pk>', views.ProveedorEliminar.as_view(), name='eliminar_proveedor'),
     path ('edit_profile/', editar_perfil, name= 'editar_perfil'),
     path ('edit_avatar/', cambiar_avatar, name= 'editar_avatar'),
-    path ('', inicio_template, name= 'inicio'),
 ]
